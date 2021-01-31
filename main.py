@@ -1,5 +1,6 @@
 import sys
 import pygame
+from moviepy.editor import *
 import pygame_menu
 
 pygame.init()
@@ -7,13 +8,17 @@ surface = pygame.display.set_mode((1280, 720))
 song_start = pygame.mixer.Sound('Sounds/8bitlong.mp3')
 music_logic = 1
 
+
 class MainGame():
     def start_class():
         song_start.stop()
         pygame.quit()
+
         pygame.init()
+
         if music_logic == 1:
             song_start.play()
+
         pygame.display.set_mode((1280, 720))
         # сама игра
 
@@ -43,5 +48,11 @@ class StartPage():
 
 
 if __name__ == '__main__':
+    pygame.display.set_caption('Arcanoid')
+    clip = VideoFileClip(r"images/StartMovie.mp4")
+    clip.preview()
+    song_start.play()
+    pygame.display.set_mode((1280, 720))
+
     StartP = StartPage()
     StartP.menu.mainloop(surface)
