@@ -1,10 +1,11 @@
 import sys
 import pygame
 from moviepy.editor import *
-import pygame_menu, math
+import pygame_menu
+import math
 
 pygame.init()
-surface = pygame.display.set_mode((1280, 720))
+surface = pygame.display.set_mode((800, 600))
 song_start = pygame.mixer.Sound('Sounds/8bitlong.mp3')
 music_logic = 1
 size = width, height = 400, 400
@@ -37,7 +38,7 @@ def start_game():
 
 
 class StartPage():
-    menu = pygame_menu.Menu(720, 1280, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
+    menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
     menu.add_button('Музыка Вкл', music_play)
     menu.add_button('Музыка Выкл', music_stop)
     menu.add_label('')
@@ -105,7 +106,7 @@ class Ball(pygame.sprite.Sprite):
             print('/')
         if pygame.sprite.spritecollideany(self, table_border):
             print(self.rect.x, self.rect.y, table_x)
-            temp = lenght_of_table / 90
+            # temp = lenght_of_table / 90 NOT USED
             p_vx = min(lenght_of_table / 2, abs(self.rect.x - table_x - lenght_of_table / 2))
             if self.rect.x - table_x - lenght_of_table / 2 < 0:
                 p_vx *= -1
@@ -141,6 +142,10 @@ def start():
     pygame.init()
     pygame.display.set_caption('Жёлтый круг')
 
+    if music_logic == 1:
+        song_start.stop()
+        song_start.play()
+
     screen = pygame.display.set_mode(size)
     screen.fill('black')
     running = True
@@ -151,8 +156,8 @@ def start():
     Border(10, height - 10, width - 10, height - 10)
     Border(10, 10, 10, height - 10)
     Border(width - 10, 10, width - 10, height - 10)
-    x_pos = 100
-    y_pos = 100
+    # x_pos = 100 NOT USED
+    # y_pos = 100 NOT USED
     while running:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -192,7 +197,22 @@ def start():
                 life -= 1
                 ball.first_start = True
             else:
+                pygame.init()
+                pygame.display.set_mode((800, 600))
+                ReturnP = ReturnPage()
+                ReturnP.menu.mainloop(surface)
                 print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+
+
+class ReturnPage():
+    menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
+    menu.add_button('Музыка Вкл', music_play)
+    menu.add_button('Музыка Выкл', music_stop)
+    menu.add_label('')
+    menu.add_label('')
+    menu.add_button('Попробовать еще раз)', start_game)
+    menu.add_label('')
+    menu.add_button('Выйти', pygame_menu.events.EXIT)
 
 
 if __name__ == '__main__':
@@ -200,7 +220,7 @@ if __name__ == '__main__':
     clip = VideoFileClip(r"images/StartMovie.mp4")
     clip.preview()
     song_start.play()
-    pygame.display.set_mode((1280, 720))
+    pygame.display.set_mode((800, 600))
 
     StartP = StartPage()
     StartP.menu.mainloop(surface)
