@@ -7,6 +7,7 @@ pygame.init()
 surface = pygame.display.set_mode((1280, 720))
 song_start = pygame.mixer.Sound('Sounds/8bitlong.mp3')
 music_logic = 1
+size = width, height = 400, 400
 FPS = 40
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
@@ -15,6 +16,35 @@ table_border = pygame.sprite.Group()
 lenght_of_table = 20
 table_x = 180
 table_y = 300
+flag = True
+life = 3
+
+
+def music_play():
+    song_start.play()
+    global music_logic
+    music_logic = 1
+
+
+def music_stop():
+    song_start.stop()
+    global music_logic
+    music_logic = 0
+
+
+def start_game():
+    start()
+
+
+class StartPage():
+    menu = pygame_menu.Menu(720, 1280, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
+    menu.add_button('Музыка Вкл', music_play)
+    menu.add_button('Музыка Выкл', music_stop)
+    menu.add_label('')
+    menu.add_label('')
+    menu.add_button('Играть', start_game)
+    menu.add_label('')
+    menu.add_button('Выйти', pygame_menu.events.EXIT)
 
 
 class Table(pygame.sprite.Sprite):
@@ -29,7 +59,9 @@ class Table(pygame.sprite.Sprite):
         self.v = 0
 
     def update(self):
+        global table_x
         self.rect = self.rect.move(self.v, 0)
+        table_x += self.v
         if pygame.sprite.spritecollideany(self, horizontal_borders):
             print('*')
             self.v = 0
@@ -52,24 +84,41 @@ class Ball(pygame.sprite.Sprite):
         self.vy = 0
 
     def update(self):
+        # print(self.vx, self.vy)
+        global table_x
+        global height
+        global flag
         self.rect = self.rect.move(self.vx, self.vy)
         if pygame.sprite.spritecollideany(self, horizontal_borders):
             print('*')
-            self.vy = -self.vy
+            print(self.rect.y)
+            if self.rect.y > 355:
+                print('########################3')
+                # quit()
+                flag = False
+                self.vy = 0
+                self.vx = 0
+            else:
+                self.vy = -self.vy
         if pygame.sprite.spritecollideany(self, vertical_borders):
             self.vx = -self.vx
             print('/')
         if pygame.sprite.spritecollideany(self, table_border):
-            print(self.rect.x, self.rect.y)
-            self.vy = -self.vy
+            print(self.rect.x, self.rect.y, table_x)
             temp = lenght_of_table / 90
-            print(table_x + lenght_of_table / 2)
-            if self.rect.x < table_x + lenght_of_table / 2:
-                self.vx = -(math.sin((table_x + lenght_of_table - self.rect.x) * temp) * 5)
-                self.vy = -(math.cos((table_x + lenght_of_table - self.rect.x) * temp) * 5)
-            elif self.rect.x > table_x + lenght_of_table / 2:
-                self.vx = (math.sin((table_x + lenght_of_table - self.rect.x) * temp) * 5)
-                self.vy = -(math.cos((table_x + lenght_of_table - self.rect.x) * temp) * 5)
+            p_vx = min(lenght_of_table / 2, abs(self.rect.x - table_x - lenght_of_table / 2))
+            if self.rect.x - table_x - lenght_of_table / 2 < 0:
+                p_vx *= -1
+            p_vy = lenght_of_table / 2
+            if p_vy > 0:
+                p_vy *= -1
+            p_xy = math.sqrt(p_vx ** 2 + p_vy ** 2)
+            kf = 5 / p_xy
+            print(p_vy, p_xy, p_vx, kf)
+            self.vx = p_vx * kf
+            self.vy = p_vy * kf
+
+            print(self.vy, self.vx)
 
 
 class Border(pygame.sprite.Sprite):
@@ -86,88 +135,64 @@ class Border(pygame.sprite.Sprite):
             self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
 
 
-class MainGame(self):
-    def start_class(self):
-        song_start.stop()
-        pygame.quit()
+def start():
+    global life
+    global flag
+    pygame.init()
+    pygame.display.set_caption('Жёлтый круг')
 
-        pygame.init()
+    screen = pygame.display.set_mode(size)
+    screen.fill('black')
+    running = True
+    ball = Ball(15, 180, 100)
+    table = Table(lenght_of_table)
+    clock = pygame.time.Clock()
+    Border(10, 10, width - 10, 10)
+    Border(10, height - 10, width - 10, height - 10)
+    Border(10, 10, 10, height - 10)
+    Border(width - 10, 10, width - 10, height - 10)
+    x_pos = 100
+    y_pos = 100
+    while running:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if ball.first_start is True:
+                    ball.vy = -5
+                    ball.first_start = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    print('aasas')
+                    table.v = 2
+                if event.key == pygame.K_LEFT:
+                    print('aasas')
+                    table.v = -2
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RIGHT:
+                    print('aasas')
+                    table.v = 0
+                if event.key == pygame.K_LEFT:
+                    print('aasas')
+                    table.v = 0
+        all_sprites.update()
 
-        if music_logic == 1:
-            song_start.play()
-
-        pygame.display.set_mode((1280, 720))
-        size = width, height = 400, 400
-        screen = pygame.display.set_mode(size)
+        # Рендеринг
         screen.fill('black')
-        running = True
-        ball = Ball(15, 180, 100)
-        table = Table(lenght_of_table)
-        clock = pygame.time.Clock()
-        Border(5, 5, width - 5, 5)
-        Border(5, height - 5, width - 5, height - 5)
-        Border(5, 5, 5, height - 5)
-        Border(width - 5, 5, width - 5, height - 5)
-        x_pos = 100
-        y_pos = 100
-        while running:
-            clock.tick(FPS)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if ball.first_start is True:
-                        ball.vy = -5
-                        ball.first_start = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT:
-                        print('aasas')
-                        table.v = 2
-                    if event.key == pygame.K_LEFT:
-                        print('aasas')
-                        table.v = -2
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RIGHT:
-                        print('aasas')
-                        table.v = 0
-                    if event.key == pygame.K_LEFT:
-                        print('aasas')
-                        table.v = 0
-
-            all_sprites.update()
-
-            # Рендеринг
-            screen.fill('black')
-            all_sprites.draw(screen)
-            # После отрисовки всего, переворачиваем экран
-            pygame.display.flip()
-
-
-class StartPage():
-    def __init__(self):
-        self.music_logic = 1
-
-    def music_play(self):
-        song_start.play()
-        global music_logic
-        music_logic = 1
-
-    def music_stop(self):
-        song_start.stop()
-        global music_logic
-        music_logic = 0
-
-    def start_game(self):
-        MainGame.start_class()
-
-    menu = pygame_menu.Menu(720, 1280, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
-    menu.add_button('Музыка Вкл', music_play)
-    menu.add_button('Музыка Выкл', music_stop)
-    menu.add_label('')
-    menu.add_label('')
-    menu.add_button('Играть', start_game)
-    menu.add_label('')
-    menu.add_button('Выйти', pygame_menu.events.EXIT)
+        all_sprites.draw(screen)
+        # После отрисовки всего, переворачиваем экран
+        pygame.display.flip()
+        if flag is False:
+            if life > 0:
+                print(ball.rect.x, ball.rect.y, '+++++++++')
+                ball.rect = ball.rect.move(180 - ball.rect.x, 100 - ball.rect.y)
+                print(ball.rect.x, ball.rect.y, '+++++++++')
+                flag = True
+                life -= 1
+                ball.first_start = True
+            else:
+                print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
 
 if __name__ == '__main__':
