@@ -197,7 +197,12 @@ def start():
                 life -= 1
                 ball.first_start = True
             else:
+                flag = True
+                ball.first_start = True
+                ball.rect = ball.rect.move(180 - ball.rect.x, 100 - ball.rect.y)
+                life = 3
                 pygame.init()
+
                 pygame.display.set_mode((800, 600))
                 ReturnP = ReturnPage()
                 ReturnP.menu.mainloop(surface)
@@ -217,7 +222,7 @@ class ReturnPage():
 
 if __name__ == '__main__':
     pygame.display.set_caption('Arcanoid')
-    clip = VideoFileClip(r"images/StartMovie.mp4")
+    clip = VideoFileClip(r"images/StartMovie86.mp4")
     clip.preview()
     song_start.play()
     pygame.display.set_mode((800, 600))
