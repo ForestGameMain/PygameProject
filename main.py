@@ -35,6 +35,8 @@ def music_stop():
     global music_logic
     music_logic = 0
 
+def next_level():
+    pass
 
 def start_game():
     start()
@@ -299,6 +301,7 @@ def start():
                 f = open("all_level/now_level.txt", 'w', encoding="utf8")
                 f.write(str(0))
                 f.close()
+
                 # окно Вы выйграли
                 # переход на вкладку с меню
             else:
@@ -318,7 +321,7 @@ class NextLevelPage():
     menu.add_label('')
     menu.add_label('Вы прошли текущий уровень! Поздравляем!')
     menu.add_label('')
-    menu.add_button('Следующий уровень', )
+    menu.add_button('Следующий уровень', next_level)
     menu.add_label('')
     menu.add_button('Выйти', pygame_menu.events.EXIT)
 
