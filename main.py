@@ -359,9 +359,9 @@ class WinPage():
 
 
 if __name__ == '__main__':
-    WinPage()
+
     pygame.display.set_caption('Arcanoid')
-    clip = VideoFileClip(r"images/StartMovie86.mp4")
+    clip = VideoFileClip(r"media/StartMovie86.mp4")
     clip.preview()
     song_start.play()
     start_menu_open()
