@@ -20,6 +20,9 @@ table_x = 180
 table_y = 300
 flag = True
 life = 3
+f = open("all_level/now_level.txt", 'w', encoding="utf8")
+f.write(str(0))
+f.close()
 f = open("all_level/now_level.txt", 'r', encoding="utf8")
 now_level = int(f.read())
 
@@ -359,7 +362,6 @@ class WinPage():
 
 
 if __name__ == '__main__':
-
     pygame.display.set_caption('Arcanoid')
     clip = VideoFileClip(r"media/StartMovie86.mp4")
     clip.preview()
