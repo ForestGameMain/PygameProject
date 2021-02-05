@@ -302,6 +302,7 @@ def start():
                 # окно Вы выйграли
                 # переход на вкладку с меню
             else:
+                NextLevelPage()
                 # вкладка следующий уровень (уровень 2 или 3 в обще n)
                 next_level[now_level]()
             table.rect = table.rect.move(180 - table.rect.x, 0)
@@ -309,6 +310,17 @@ def start():
             flag = True
             life -= 1
             ball.first_start = True
+
+class NextLevelPage():
+    menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
+    menu.add_button('Музыка Вкл', music_play)
+    menu.add_button('Музыка Выкл', music_stop)
+    menu.add_label('')
+    menu.add_label('Вы прошли текущий уровень! Поздравляем!')
+    menu.add_label('')
+    menu.add_button('Следующий уровень', )
+    menu.add_label('')
+    menu.add_button('Выйти', pygame_menu.events.EXIT)
 
 
 if __name__ == '__main__':
