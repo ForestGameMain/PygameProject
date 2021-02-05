@@ -23,6 +23,10 @@ life = 3
 f = open("all_level/now_level.txt", 'r', encoding="utf8")
 now_level = int(f.read())
 
+def start_menu_open():
+    pygame.display.set_mode((800, 600))
+    StartP = StartPage()
+    StartP.menu.mainloop(surface)
 
 def music_play():
     song_start.play()
@@ -35,8 +39,10 @@ def music_stop():
     global music_logic
     music_logic = 0
 
-def next_level():
-    pass
+
+def next_level_start():
+    start_game()
+
 
 def start_game():
     start()
@@ -244,6 +250,12 @@ def start():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.QUIT:
+                ball.kill()
+                table.kill()
+                for i in break_border:
+                    i.kill()
+                start_menu_open()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if ball.first_start is True:
                     ball.vy = -5
@@ -301,7 +313,7 @@ def start():
                 f = open("all_level/now_level.txt", 'w', encoding="utf8")
                 f.write(str(0))
                 f.close()
-
+                WinPage()
                 # окно Вы выйграли
                 # переход на вкладку с меню
             else:
@@ -314,6 +326,8 @@ def start():
             life -= 1
             ball.first_start = True
 
+
+
 class NextLevelPage():
     menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
     menu.add_button('Музыка Вкл', music_play)
@@ -321,17 +335,23 @@ class NextLevelPage():
     menu.add_label('')
     menu.add_label('Вы прошли текущий уровень! Поздравляем!')
     menu.add_label('')
-    menu.add_button('Следующий уровень', next_level)
-    menu.add_label('')
+    menu.add_button('Следующий уровень', next_level_start)
+    menu.add_button('В меню', start)
     menu.add_button('Выйти', pygame_menu.events.EXIT)
 
+
+class WinPage():
+    menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
+    menu.add_button('Музыка Вкл', music_play)
+    menu.add_button('Музыка Выкл', music_stop)
+    menu.add_label('')
+    menu.add_label('Поздравляем! Вы Выиграли!')
+    menu.add_label('')
+    menu.add_button('В меню', start_menu_open)
 
 if __name__ == '__main__':
     pygame.display.set_caption('Arcanoid')
     clip = VideoFileClip(r"images/StartMovie86.mp4")
     clip.preview()
     song_start.play()
-    pygame.display.set_mode((800, 600))
-
-    StartP = StartPage()
-    StartP.menu.mainloop(surface)
+    start_menu_open()
