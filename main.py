@@ -296,6 +296,12 @@ def start():
                 life -= 1
                 ball.first_start = True
             else:
+                f = open("all_level/now_level.txt", 'w', encoding="utf8")
+                f.write(str(0))
+                f.close()
+                for i in break_border:
+                    i.kill()
+                now_level = 0
                 flag = True
                 ball.first_start = True
                 ball.rect = ball.rect.move(180 - ball.rect.x, 100 - ball.rect.y)
