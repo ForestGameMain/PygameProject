@@ -15,7 +15,7 @@ all_sprites = pygame.sprite.Group()
 table_border = pygame.sprite.Group()
 break_border = pygame.sprite.Group()
 list_of_break = list()
-lenght_of_table = 20
+lenght_of_table = 33
 table_x = 180
 table_y = 300
 flag = True
@@ -124,8 +124,8 @@ class Table(pygame.sprite.Sprite):
         self.len = length
         self.image = pygame.Surface((2 * length, 2 * length), pygame.SRCALPHA, 32)
         pygame.draw.rect(self.image, pygame.Color("white"),
-                         (0, 0, 40, length))
-        self.rect = pygame.Rect((180, 300, 40, length))
+                         (0, 0, length, 15))
+        self.rect = pygame.Rect((180, 300, length, 15))
         self.add(table_border)
         self.v = 0
 
