@@ -32,7 +32,7 @@ def start_menu_open():
     StartP = StartPage()
     StartP.menu.mainloop(surface)
 
-#блок управления музыкой
+#функции управления музыкой
 def music_play():
     song_start.stop()
     song_start.play()
