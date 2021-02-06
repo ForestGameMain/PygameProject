@@ -26,13 +26,13 @@ f.close()
 f = open("all_level/now_level.txt", 'r', encoding="utf8")
 now_level = int(f.read())
 
-
+#открывает меню
 def start_menu_open():
     pygame.display.set_mode((800, 600))
     StartP = StartPage()
     StartP.menu.mainloop(surface)
 
-
+#блок управления музыкой
 def music_play():
     song_start.stop()
     song_start.play()
@@ -49,30 +49,30 @@ def music_stop():
 def start_game():
     start()
 
-
+#первый уроень
 def first_level():
     temp_x = 10
     temp_y = 20
     for i in range(8):
         for j in range(0, 19, 1):
             if j % 2 == i % 2:
-                Break(temp_x, temp_y)
+                Brik(temp_x, temp_y)
             temp_x += 20
         temp_y += 20
         temp_x = 10
 
-
+#второй уровень
 def second_level():
     temp_x = 11
     temp_y = 30
     for j in range(6):
         for i in range(18):
-            Break(temp_x, temp_y)
+            Brik(temp_x, temp_y)
             temp_x += 20 + 1
         temp_x = 11
         temp_y += 30
 
-
+#третий уровень
 def third_level():
     temp_x = 0
     temp_y = 5
@@ -95,17 +95,17 @@ def third_level():
     for i in range(14):
         for j in range(20):
             if map_level[i][j] == 1:
-                Break(temp_x, temp_y)
+                Brik(temp_x, temp_y)
             temp_x += 20
         temp_y += 20
         temp_x = 0
-    Break(190, 115)
+    Brik(190, 115)
 
 
 next_level = [first_level, second_level, third_level]
 
-
-class Break(pygame.sprite.Sprite):
+#класс кирпичей
+class Brik(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__(all_sprites)
         self.len = 20
@@ -117,7 +117,7 @@ class Break(pygame.sprite.Sprite):
         self.rect = pygame.Rect((x, y, 20, 20))
         self.add(break_border)
 
-
+#класс доски
 class Table(pygame.sprite.Sprite):
     def __init__(self, length):
         super().__init__(all_sprites)
@@ -130,15 +130,17 @@ class Table(pygame.sprite.Sprite):
         self.v = 0
 
     def update(self):
+
         global table_x
         self.rect = self.rect.move(self.v, 0)
         table_x += self.v
+        #взаимодействие с границами поля
         if pygame.sprite.spritecollideany(self, horizontal_borders):
             self.v = 0
         if pygame.sprite.spritecollideany(self, vertical_borders):
             self.v = 0
 
-
+#класс мяча
 class Ball(pygame.sprite.Sprite):
     def __init__(self, radius, x, y):
         super().__init__(all_sprites)
@@ -156,6 +158,7 @@ class Ball(pygame.sprite.Sprite):
         global height
         global flag
         self.rect = self.rect.move(self.vx, self.vy)
+        #взаимодействие с границами поля
         if pygame.sprite.spritecollideany(self, horizontal_borders):
             if self.rect.y > 355:
                 flag = False
@@ -165,6 +168,7 @@ class Ball(pygame.sprite.Sprite):
                 self.vy = -self.vy
         if pygame.sprite.spritecollideany(self, vertical_borders):
             self.vx = -self.vx
+        #взаимодействие с доской
         if pygame.sprite.spritecollideany(self, table_border):
             p_vx = min(lenght_of_table / 2, abs(self.rect.x + self.radius - table_x - lenght_of_table / 2))
             p_vy = math.sqrt((lenght_of_table ** 2) / 2 - (lenght_of_table / 2) ** 2)
@@ -174,6 +178,7 @@ class Ball(pygame.sprite.Sprite):
             self.vy = p_vy * kf * (-1)
             if self.rect.x + self.radius - table_x - lenght_of_table / 2 < 0:
                 self.vx *= -1
+        #взаимодействие с кирпичиками
         if pygame.sprite.spritecollideany(self, break_border):
             gets_hit = pygame.sprite.spritecollideany(self, break_border)
             if gets_hit.x <= self.rect.x <= gets_hit.x + 20:
@@ -186,7 +191,7 @@ class Ball(pygame.sprite.Sprite):
                     break_border.remove(some_sprite)
                     some_sprite.kill()
 
-
+#класс стенок игрового поля
 class Border(pygame.sprite.Sprite):
     # строго вертикальный или строго горизонтальный отрезок
     def __init__(self, x1, y1, x2, y2):
@@ -200,7 +205,7 @@ class Border(pygame.sprite.Sprite):
             self.image = pygame.Surface([x2 - x1, 1])
             self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
 
-
+#класс стартовой страницы
 class StartPage():
     menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
     menu.add_button('Музыка Вкл', music_play)
@@ -211,7 +216,7 @@ class StartPage():
     menu.add_label('')
     menu.add_button('Выйти', pygame_menu.events.EXIT)
 
-
+#класс траници при проигрыше
 class ReturnPage():
     menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
     menu.add_button('Музыка Вкл', music_play)
@@ -222,7 +227,7 @@ class ReturnPage():
     menu.add_label('')
     menu.add_button('Выйти', pygame_menu.events.EXIT)
 
-
+#функция с игровым циклом
 def start():
     global life
     global flag
@@ -289,13 +294,17 @@ def start():
         all_sprites.draw(screen)
         pygame.display.flip()
         if flag is False:
+            #если все жизни кончились да или нет
             if life > 0:
+                #вернуть все на свое место
                 table.rect = table.rect.move(180 - table.rect.x, 0)
                 ball.rect = ball.rect.move(table.rect.x - ball.rect.x, 269 - ball.rect.y)
                 flag = True
                 life -= 1
                 ball.first_start = True
             else:
+                #вывести вкладку о конце игры
+                #записать количество жизней в 3
                 f = open("all_level/now_level.txt", 'w', encoding="utf8")
                 f.write(str(0))
                 f.close()
@@ -313,7 +322,7 @@ def start():
                 ReturnP = ReturnPage()
                 ReturnP.menu.mainloop(surface)
         if len(break_border) == 0:
-            print('/*-*/*/*--*/**-*-*-*--')
+            #если все кирпичи разбиты
             f = open("all_level/now_level.txt", 'w', encoding="utf8")
             f.write(str(now_level + 1))
             f.close()
@@ -333,10 +342,10 @@ def start():
                 life = 3
                 ball.kill()
                 table.kill()
+                # вкладка следующий уровень (уровень 2 или 3 в обще n)
                 pygame.display.set_mode((800, 600))
                 NextLevelP = NextLevelPage()
                 NextLevelP.menu.mainloop(surface)
-                # вкладка следующий уровень (уровень 2 или 3 в обще n)
                 next_level[now_level]()
             table.rect = table.rect.move(180 - table.rect.x, 0)
             ball.rect = ball.rect.move(table.rect.x - ball.rect.x, 269 - ball.rect.y)
@@ -345,6 +354,7 @@ def start():
             ball.first_start = True
 
 
+#класс странице переходной между уровнями
 class NextLevelPage():
     menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
     menu.add_button('Музыка Вкл', music_play)
@@ -356,7 +366,7 @@ class NextLevelPage():
     menu.add_button('В меню', start_menu_open)
     menu.add_button('Выйти', pygame_menu.events.EXIT)
 
-
+#класс страницы при выигрывании
 class WinPage():
     menu = pygame_menu.Menu(600, 800, 'Arcanoid', theme=pygame_menu.themes.THEME_DARK)
     menu.add_button('Музыка Вкл', music_play)
